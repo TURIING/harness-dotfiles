@@ -28,14 +28,14 @@ description: 进入探索模式 — 思考问题、调查代码、澄清需求�
 
 ```bash
 # 列出所有已有 spec 能力域
-ls .dsh/har/specs/
+ls har/specs/
 ```
 
 分析用户需求与各 spec 目录名称的相关性。如果发现某个 spec 与用户需求高度匹配，**必须读取该 spec 的完整内容**：
 
 ```bash
 # 读取匹配的 spec
-cat .dsh/har/specs/<capability>/spec.md
+cat har/specs/<capability>/spec.md
 ```
 
 然后告知用户匹配情况，例如：
@@ -49,7 +49,7 @@ cat .dsh/har/specs/<capability>/spec.md
 检查是否有活跃变更可能与当前需求冲突：
 
 ```bash
-ls .dsh/har/changes/
+ls har/changes/
 ```
 
 注意排除 `archive/` 目录。如果存在可能冲突的变更，提醒用户先处理。

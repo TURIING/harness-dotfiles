@@ -8,7 +8,7 @@ description: 归档已完成的变更 — 同步 specs、提取知识到 rules/m
 
 归档已完成的变更。这个阶段做三件事：
 1. 将 delta specs 合并到主 spec 库
-2. 从变更中提取有价值的项目知识（先展示，确认后写入 rules/ 或 memory/）
+2. 从变更中提取有价值的项目知识（先展示，确认后写入 `.dsh/rules/` 或 `har/memory/`）
 3. 将变更目录移到 archive/
 
 ---
@@ -19,7 +19,7 @@ description: 归档已完成的变更 — 同步 specs、提取知识到 rules/m
 
 1. **选择变更**
 
-   如果未提供名称，列出 `.dsh/har/changes/`（排除 archive/）中的变更让用户选择。只显示活跃变更。
+   如果未提供名称，列出 `har/changes/`（排除 archive/）中的变更让用户选择。只显示活跃变更。
 
    **重要**: 不自动选择，始终让用户选择。
 
@@ -44,14 +44,14 @@ description: 归档已完成的变更 — 同步 specs、提取知识到 rules/m
    - `## REMOVED Requirements` — 删除需求
    - `## RENAMED Requirements` — 重命名需求
 
-   对每个 delta spec，智能合并到 `.dsh/har/specs/<capability>/spec.md`：
+   对每个 delta spec，智能合并到 `har/specs/<capability>/spec.md`：
 
    - **ADDED**: 追加到主 spec 的 Requirements 章节
    - **MODIFIED**: 在主 spec 中找到对应需求，替换为完整内容
    - **REMOVED**: 从主 spec 中删除整个需求块
    - **RENAMED**: 找到 FROM 需求，重命名为 TO
 
-   如果主 spec 不存在（新能力域），创建 `.dsh/har/specs/<capability>/spec.md`：
+   如果主 spec 不存在（新能力域），创建 `har/specs/<capability>/spec.md`：
    ```markdown
    ## Purpose
    <!-- TBD -->
@@ -73,8 +73,8 @@ description: 归档已完成的变更 — 同步 specs、提取知识到 rules/m
    |---------|---------|---------|
    | 编码约定/模式 | 反复出现的模式、项目特有的规范 | `.dsh/rules/<topic>.md` |
    | 架构决策 | 选择 X 而非 Y 的原因、系统边界 | `.dsh/rules/architecture.md` |
-   | 模块关系 | 模块间依赖、调用链路、职责 | `memory/` |
-   | 踩坑记录 | 配置注意事项、构建问题、边界条件 | `memory/` |
+   | 模块关系 | 模块间依赖、调用链路、职责 | `har/memory/` |
+   | 踩坑记录 | 配置注意事项、构建问题、边界条件 | `har/memory/` |
    | 设计方案 | 可复用的设计模式、通用解决方案 | `.dsh/rules/` |
 
    **重要**: 只提取项目中**不显而易见**的知识。代码结构、git 历史等不需要提取。
@@ -93,10 +93,10 @@ description: 归档已完成的变更 — 同步 specs、提取知识到 rules/m
    1. **[标题]** — 描述 → 写入 `.dsh/rules/architecture.md`
    
    ### 模块关系
-   1. **[标题]** — 描述 → 写入 `memory/`
+   1. **[标题]** — 描述 → 写入 `har/memory/`
    
    ### 踩坑记录
-   1. **[标题]** — 描述 → 写入 `memory/`
+   1. **[标题]** — 描述 → 写入 `har/memory/`
    ```
 
    用 AskUserQuestion 让用户逐条确认或拒绝。用户确认后才写入。
@@ -104,20 +104,20 @@ description: 归档已完成的变更 — 同步 specs、提取知识到 rules/m
 6. **写入知识**
 
    - **rules/**: 创建或更新 markdown 文件。如果是新主题，创建新文件。如果是对已有主题的补充，追加内容。
-   - **memory/**: 按 Claude Code memory 格式（frontmatter + 内容）创建记忆文件，并更新 MEMORY.md 索引。
+   - **har/memory/**: 按 Claude Code memory 格式（frontmatter + 内容）创建记忆文件，并更新 MEMORY.md 索引。
 
 7. **归档变更目录**
 
    创建目标路径：
    ```
-   .dsh/har/changes/archive/YYYY-MM-DD-<name>/
+   har/changes/archive/YYYY-MM-DD-<name>/
    ```
 
    如果目标已存在，报错并建议处理方式。
 
    移动变更目录：
    ```bash
-   mv .dsh/har/changes/<name> .dsh/har/changes/archive/YYYY-MM-DD-<name>/
+   mv har/changes/<name> har/changes/archive/YYYY-MM-DD-<name>/
    ```
 
 8. **显示归档摘要**
@@ -126,7 +126,7 @@ description: 归档已完成的变更 — 同步 specs、提取知识到 rules/m
    ## 归档完成
 
    **变更:** <name>
-   **归档到:** .dsh/har/changes/archive/YYYY-MM-DD-<name>/
+   **归档到:** har/changes/archive/YYYY-MM-DD-<name>/
    **Specs:** ✓ 已同步 / 无 delta specs / 跳过
    **知识提取:** 已写入 N 条 (rules: X, memory: Y)
 

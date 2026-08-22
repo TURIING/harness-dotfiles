@@ -32,9 +32,9 @@ description: 创建变更规划 — 按 proposal → specs → design → tasks 
 
 2. **创建变更目录**
 
-   在 `.dsh/har/changes/` 下创建变更目录：
+   在 `har/changes/` 下创建变更目录：
    ```bash
-   mkdir -p .dsh/har/changes/<name>/specs
+   mkdir -p har/changes/<name>/specs
    ```
 
    如果该目录已存在，询问用户是继续现有变更还是创建新的。

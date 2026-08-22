@@ -1,6 +1,6 @@
 ---
 name: har-doc
-description: 生成/增量更新项目知识文档 — 从代码派生 overview/architecture/build/modules，审阅确认后写入 .dsh/har/docs。
+description: 生成/增量更新项目知识文档 — 从代码派生 overview/architecture/build/modules，审阅确认后写入 har/docs。
 ---
 
 # HAR: 文档
@@ -17,12 +17,12 @@ description: 生成/增量更新项目知识文档 — 从代码派生 overview/
 - 携带主题/模块/类名 → 针对该项生成或更新
 - 无参 → 根据当前对话上下文推断要处理的主题，不确定就询问
 
-**输出位置**: `.dsh/har/docs/`
+**输出位置**: `har/docs/`
 
 ## 固定骨架（不可扩展）
 
 ```bash
-.dsh/har/docs/
+har/docs/
 ├── INDEX.md          # 检索地图：分类规则 + 模块/类 → 文件 映射
 ├── overview.md       # 项目定位 + 总架构图
 ├── architecture.md   # 分层 / 数据流 / 生命周期
@@ -48,11 +48,11 @@ description: 生成/增量更新项目知识文档 — 从代码派生 overview/
 
 ### 1. 通读全部 docs（硬约束）
 
-干活前必须 Read 全部 `.dsh/har/docs/` 文档：
+干活前必须 Read 全部 `har/docs/` 文档：
 
 ```bash
-ls .dsh/har/docs/           # 不存在 → 先初始化骨架
-ls .dsh/har/docs/modules/   # 列出全部模块文档
+ls har/docs/           # 不存在 → 先初始化骨架
+ls har/docs/modules/   # 列出全部模块文档
 ```
 
 读取 INDEX + overview + architecture + build + modules/*。目的：
@@ -116,10 +116,10 @@ ls src/ include/
 
 ## 初始化
 
-首次执行 `.dsh/har/docs/` 不存在时，先建骨架：
+首次执行 `har/docs/` 不存在时，先建骨架：
 
 ```bash
-mkdir -p .dsh/har/docs/modules
+mkdir -p har/docs/modules
 ```
 
 生成 INDEX.md（含分类规则）+ overview.md（项目定位 + 总架构图）起步，其余文件按需生成。
