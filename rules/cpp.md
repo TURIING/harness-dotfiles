@@ -13,6 +13,7 @@
 | 私有成员变量 | `m_camelCase` | `m_name`、`m_pPointer` |
 | 常量 | `kPascalCase` | `kMaxSize` |
 | 枚举值 | `PascalCase` | `Red` |
+| 类型别名 | `PascalCase` | `HandleId` |
 | 命名空间 | `snake_case` | `my_project` |
 | 宏 | `UPPER_SNAKE_CASE` | `MY_VERSION` |
 | 文件名 | `PascalCase`，头文件与cpp文件同名即可 | `Header.h` 、 `Header.cpp` |
@@ -53,6 +54,10 @@
 - 位操作相关代码都必须封装成宏定义（`UPPER_SNAKE_CASE`）复用，不散落裸位运算
   - 反例：散落各处的 `(value >> 4) & 0xF`、`flags |= 0x80`，魔法位掩码含义不明且易写错
   - 正例：`#define BIT_GET(v, b) (((v) >> (b)) & 1u)`、`#define BIT_SET(v, b) ((v) |= (1u << (b)))`、`#define BIT_CLEAR(v, b) ((v) &= ~(1u << (b)))` 一处定义、多处调用
+- 有特殊意义的类型（句柄、ID、索引、计数等语义值）定义为 `using` 别名（`PascalCase`），不直接用裸类型
+  - 反例：`uint32_t m_graphicsQueueFamilyIndex;` 与 `uint32_t m_graphicsQueueIndex;` 类型相同，语义混淆编译器无法发现
+  - 正例：`using QueueFamilyIndex = uint32_t;`、`using QueueIndex = uint32_t;` 参数与成员的类型即语义，误传一眼可见
+  - 边界：`using` 别名只是语义标注，类型系统上仍是原类型；需要编译器强制隔离时改用 `enum class` 或 wrapper 类型
 - 函数体的执行内容必须与函数名一致：函数只做名称所表达的一件事，不做名外之事
   - 反例：`Update()` 名为"更新"却顺带做了资源加载、日志落盘、网络同步，名不副实
   - 正例：`Update()` 只更新状态，资源加载/日志/网络分别由 `LoadResource()`、`WriteLog()`、`SyncNetwork()` 承担
