@@ -8,6 +8,7 @@
 |------|------|------|
 | 类/结构体 | `PascalCase` | `UserManager` |
 | 公有函数/成员函数 | `PascalCase` | `GetName()` |
+| 类私有函数 | `camelCase` | `getName()` |
 | 静态变量 | `sPascalCase` | `sGetName()` |
 | 变量 | `camelCase` | `userCount` |
 | 私有成员变量 | `m_camelCase` | `m_name`、`m_pPointer` |
