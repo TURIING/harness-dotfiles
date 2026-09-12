@@ -87,3 +87,14 @@
   - 反例：`#define EARLY_RETURN(cond) if (cond) return;` —— 展开后与调用处外层 `if/else` 错配；条件成立时后续语句的归属被改变
   - 正例：`#define EARLY_RETURN(cond) do { if (cond) { return; } } while (0)` —— 宏整体等价单条语句，尾部可安全加 `;`，宏内变量不泄漏到调用方作用域
   - 含 `return` 的宏仅适用于无返回值语境（void 函数/构造函数/析构函数），使用前需确认；通用早退宏（如 `EARLY_RETURN`）放项目统一 `src/Macro.h` 一处定义
+
+## 内存管理
+- 受 `SharedPtr` 管理的类型必须在类定义所在头文件声明 Ptr 别名（`DECLARE_CLASS_AND_SHARE_PTR` / `DECLARE_SHARE_PTR_CLASS`），其他位置一律用别名，禁止裸写 `NS_UTILS::SharedPtr<T>`
+  - 反例：`void SetBuffer(NS_UTILS::SharedPtr<VulkanBufferObject> bufferObject, ...)`、`std::vector<NS_UTILS::SharedPtr<VulkanBufferObject>> m_resources;`
+  - 正例：`void SetBuffer(const VulkanBufferObjectPtr &bufferObject, ...)`、`std::vector<VulkanBufferObjectPtr> m_resources;`
+  - 边界：嵌套类型无法前向声明别名，故别名在类内声明（如 `VulkanStageBuffer::Segment` 的 `DECLARE_SHARE_PTR_CLASS(Segment)`；类外引用写 `VulkanStageBuffer::SegmentPtr`）；模板形参类型（如 `ResourceManager::Make<D>`）无别名可用，仍写 `NS_UTILS::SharedPtr<D>`
+- 已声明 Ptr 别名的类型，函数参数一律用 `const Ptr &`，不用 `const T &`，也不按值传
+  - 反例：`VulkanBufferObject(const VulkanContext &context, ...)` —— 上层明明持 `VulkanContextPtr`，此处解引用成裸引用后所有权语义丢失，调用方还要再 `Ptr(&)` 包回去，refcount 白跳
+  - 正例：`VulkanBufferObject(const VulkanContextPtr &context, ...)` 配合 `context->IsStagingBufferBypassEnabled()`（`SharedPtr` 的 `operator->` 为 const 成员，取 `const &` 不增计数）
+  - 覆盖成员变量：形参改成 `const Ptr &` 后成员也必须存 `Ptr`，否则 `m_context(context)` 存的是临时量的地址，语句结束即悬垂
+  - 边界：`SharedPtr` 要求类型经 `Ref` 参与引用计数，故受此规则的类型须继承 `NS_UTILS::Ref`；无 Ptr 别名的类型（如 `VulkanStageBuffer` 的独占 `UniquePtr` 形态）不适用
