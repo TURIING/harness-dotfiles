@@ -43,7 +43,7 @@
 | 枚举 | `enum class`，不用裸 enum |
 | 类型别名 | `using`，不用 `typedef` |
 | 类型转换 | `static_cast`/`dynamic_cast`，不用 C 风格 |
-| 返回值不可忽略 | 函数返回值不应被丢弃时使用 `[[nodiscard]]`（如错误码、句柄、状态查询等） |
+| 返回值不可忽略 | 函数返回值不应被丢弃时使用 `NODISCARD` 宏（定义于 `Utils/Macro.h`，展开为 `[[nodiscard]]`；如错误码、句柄、状态查询等），不直接写 `[[nodiscard]]` 属性字面量 |
 
 ## 代码封装抽象
 - 魔法数字、重复字符串不散落字面量：定义为 `constexpr` 常量（`kPascalCase`）后复用
@@ -77,3 +77,13 @@
     ```
     `CreateInstance()` / `CreateDevice()` / `CreateSwapchain()` / `CreatePipeline()`
     各自只做一件事，错误处理内聚在自己内部
+
+## 善用宏定义
+- 枚举 → 值的映射 switch 中，单值映射的 case（`case X: return Y;`）用 `CASE_FROM_TO(X, Y)` 压缩，禁止逐 case 手写两行
+  - 反例：`case ElementType::BYTE: return VK_FORMAT_R8_SNORM;` 十六行逐一手写
+  - 正例：`CASE_FROM_TO(ElementType::BYTE, VK_FORMAT_R8_SNORM);`（宏来自 `Utils/Macro.h`，需 include）
+  - `TO` 可为任意单个返回表达式，条件返回值同样适用，无需拆手写 case：`CASE_FROM_TO(ElementType::BYTE, integer ? VK_FORMAT_R8_SINT : VK_FORMAT_R8_SSCALED);` 等价于 `case ElementType::BYTE: return integer ? VK_FORMAT_R8_SINT : VK_FORMAT_R8_SSCALED;`
+- 通用语句型宏（供普通代码调用、内含 `return` 或多条语句）必须用 `do { } while (0)` 包裹展开体，隔离作用域
+  - 反例：`#define EARLY_RETURN(cond) if (cond) return;` —— 展开后与调用处外层 `if/else` 错配；条件成立时后续语句的归属被改变
+  - 正例：`#define EARLY_RETURN(cond) do { if (cond) { return; } } while (0)` —— 宏整体等价单条语句，尾部可安全加 `;`，宏内变量不泄漏到调用方作用域
+  - 含 `return` 的宏仅适用于无返回值语境（void 函数/构造函数/析构函数），使用前需确认；通用早退宏（如 `EARLY_RETURN`）放项目统一 `src/Macro.h` 一处定义

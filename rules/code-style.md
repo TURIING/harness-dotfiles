@@ -43,3 +43,7 @@
       - 嵌套类型/别名区（using、enum class、内部 struct）与函数/变量之间
       - 带"为什么"注释的声明：注释块上方留空行，与上一声明分离
     - 不空行：同一逻辑组内的连续声明（如一组链式 setter、重载族、成组 getter）
+  - 成员访问链过长或同一对象被链式访问多次时，先在函数内用 `auto` 引用别名捕获一次再访问，不重复书写长链
+    - 反例：函数内多处直接写 `m_info.m_soa.Data<PipelineInfo::kAttributeDescription>()`
+    - 正例：先 `auto& soa = m_info.m_soa;`，再写 `soa.Data<PipelineInfo::kAttributeDescription>()`
+    - 只读访问用 `auto const&`，需要修改用 `auto&`；对象可能不可拷贝，禁止用 `auto` 值拷贝代替
