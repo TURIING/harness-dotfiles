@@ -19,6 +19,11 @@
 | 宏 | `UPPER_SNAKE_CASE` | `MY_VERSION` |
 | 文件名 | `PascalCase`，头文件与cpp文件同名即可 | `Header.h` 、 `Header.cpp` |
 
+- 带转换语义的函数命名为 `TransXXXToXXX`（`XXX` 为源与目标类型；`Trans` 前缀即 PascalCase 的首段；同名重载族按源类型拆成不同名字）
+  - 正例：`TransVkResultToString`、`TransVulkanLayoutToVkImageLayout`、`TransTextureFormatToVkFormat`
+  - 反例：`VkLayoutString`、`vk_result_string`、`GetVkFormat`、`GetFilter`
+  - 边界：纯数值计算与查询（`GetBytesPerPixel`、`GetComponentCount`、`GetMaxLod`）、判定函数（`IsVkDepthFormat`）不属于转换，保持原名
+
 ## 头文件
 
 | 规则 | 说明 |
